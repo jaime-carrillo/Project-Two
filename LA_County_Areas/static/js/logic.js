@@ -12,10 +12,10 @@ d3.json(geoData, function(income_data) {
             valueProperty: "MHI2016",
 
             // Set color scale
-            scale: ["#edf8fb", "#006d2c"],
+            scale: ["#00c7ff", "#94003a"],
 
             // Number of breaks in step range
-            steps: 5,
+            steps: 6,
 
             // q for quartile, e for equidistant, k for k-means
             mode: "q",
@@ -23,7 +23,7 @@ d3.json(geoData, function(income_data) {
                 // Border color
                 color: "#fff",
                 weight: 1,
-                fillOpacity: 0.5
+                fillOpacity: 0.7
             },
 
             // Binding a pop-up to each layer
