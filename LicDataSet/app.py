@@ -11,6 +11,9 @@ from datetime import date, timedelta
 
 from flask import Flask, jsonify
 
+from flask_cors import CORS
+
+
 
 #################################################
 # Database Setup
@@ -35,6 +38,7 @@ Hospitals_Encounters = Base.classes.hospitals_avg_encounters
 # Flask Setup
 #################################################
 app = Flask(__name__)
+CORS(app)
 
 #################################################
 # Flask Routes
