@@ -96,14 +96,14 @@ def hos_enc():
 
     """Return a list of dates for each prcp value"""
     # Query all dates and tobs
-    results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE, Hospitals_Encounters.LONGITUDE, Hospitals_Encounters.FAC_NAME, Hospitals_Encounters.DBA_ADDRESS1,Hospitals_Encounters.DBA_CITY, Hospitals_Encounters.DBA_ZIP_CODE, Hospitals_Encounters.TOTAL_NUMBER_BEDS, Hospitals_Encounters.AvgAdmits, Hospitals_Encounters.AvgVisits).\
+    results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE, Hospitals_Encounters.LONGITUDE, Hospitals_Encounters.FAC_NAME, Hospitals_Encounters.DBA_ADDRESS1,Hospitals_Encounters.DBA_CITY, Hospitals_Encounters.DBA_ZIP_CODE, Hospitals_Encounters.TOTAL_NUMBER_BEDS, Hospitals_Encounters.NET_TOT, Hospitals_Encounters.AvgAdmits, Hospitals_Encounters.AvgVisits).\
         order_by(Hospitals_Encounters.OSHPD_ID).all()
 
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_hospitals
     all_hospitals = []
-    for id, lat, lon, name, address, city, zip, beds, admits, visits in results:
+    for id, lat, lon, name, address, city, zip, beds, net, admits, visits in results:
         hoptial_dict = {}
         hoptial_dict["ID"] = id
         hoptial_dict["LATITUDE"] = lat
@@ -113,6 +113,7 @@ def hos_enc():
         hoptial_dict["DBA_CITY"] = city
         hoptial_dict["DBA_ZIP_CODE"] = zip
         hoptial_dict["Total_beds"] = beds
+        hoptial_dict["Net_Total"] = net
         hoptial_dict["AvgAdmits"] = admits
         hoptial_dict["AvgVisits"] = visits
         all_hospitals.append(hoptial_dict)
