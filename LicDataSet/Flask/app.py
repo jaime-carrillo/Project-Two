@@ -20,7 +20,7 @@ from flask_cors import CORS
 #################################################
 
 # Connect to file
-engine = create_engine("sqlite:///Facilities.sqlite")
+engine = create_engine("sqlite:///data/Facilities.sqlite")
 
 # reflect an existing database into a new model
 Base = automap_base()
@@ -103,11 +103,16 @@ def hos_enc():
     results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE, Hospitals_Encounters.LONGITUDE, Hospitals_Encounters.FAC_NAME, Hospitals_Encounters.DBA_ADDRESS1,Hospitals_Encounters.DBA_CITY, Hospitals_Encounters.DBA_ZIP_CODE, Hospitals_Encounters.TOTAL_NUMBER_BEDS, Hospitals_Encounters.NET_TOT, Hospitals_Encounters.AvgAdmits, Hospitals_Encounters.AvgVisits).\
         order_by(Hospitals_Encounters.OSHPD_ID).all()
 
+    # results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE).\
+    #     order_by(Hospitals_Encounters.OSHPD_ID).all()
+
+
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_hospitals
     all_hospitals = []
-    for id, lat, lon, name, address, city, zip, beds, net, admits, visits in results:
+
+    for id, lat, lon, name, address, city, zip, bed, net, admit, visit in results:
         hoptial_dict = {}
         hoptial_dict["ID"] = id
         hoptial_dict["LATITUDE"] = lat
@@ -116,10 +121,10 @@ def hos_enc():
         hoptial_dict["DBA_ADDRESS1"] = address
         hoptial_dict["DBA_CITY"] = city
         hoptial_dict["DBA_ZIP_CODE"] = zip
-        hoptial_dict["Total_beds"] = beds
-        hoptial_dict["Net_Total"] = net
-        hoptial_dict["AvgAdmits"] = admits
-        hoptial_dict["AvgVisits"] = visits
+        hoptial_dict["TOTAL_NUMBER_BEDS"] = bed
+        hoptial_dict["NET_TOT"] = net
+        hoptial_dict["AvgAdmits"] = admit
+        hoptial_dict["AvgVisits"] = visit
         all_hospitals.append(hoptial_dict)
 
     return jsonify(all_hospitals)
