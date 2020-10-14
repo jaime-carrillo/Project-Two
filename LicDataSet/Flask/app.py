@@ -34,6 +34,7 @@ Licensed  = Base.classes.LosAnglesCountyLicData
 Encounters = Base.classes.encounters
 Hospitals_Encounters = Base.classes.hospitals_avg_encounters
 Ed = Base.classes.LA_ed_data
+Food = Base.classes.Food_Pantry
 
 #################################################
 # Flask Setup
@@ -57,6 +58,7 @@ def welcome():
         f"/api/v1.0/encounters<br/>"
         f"/api/v1.0/hospitals&encounters<br/>"
         f"/api/v1.0/ed<br/>"
+        f"/api/v1.0/food<br/>"
     )
 
 
@@ -190,19 +192,18 @@ def ed():
 
     """Return a list of dates for each prcp value"""
     # Query all dates and tobs
-    results = session.query(Ed.oshpd_id, Ed.facility_name, Ed.DBA_ADDRESS1,Ed.DBA_CITY, Ed.DBA_ZIP_CODE, Ed.licensed_bed_size, Ed.control_type_desc, Ed.ED_Visit, Ed.Medi_Cal, Ed.Medicare, Ed.Other_Payer).\
+    results = session.query(Ed.oshpd_id, Ed.facility_name, Ed.DBA_ADDRESS1,Ed.DBA_CITY, Ed.DBA_ZIP_CODE, Ed.licensed_bed_size, Ed.control_type_desc, Ed.ED_Visit, Ed.Medi_Cal, Ed.Medicare, Ed.Other_Payer, Ed.SelfPay, Ed.DX_Symptoms, Ed.HispanicorLatino, Ed.NonHis).\
         order_by(Ed.oshpd_id).all()
 
     # results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE).\
     #     order_by(Hospitals_Encounters.OSHPD_ID).all()
-
 
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_hospitals
     all_hospitals = []
 
-    for id, name, address, city, zip, bed, type, visits, medical, medicare, other in results:
+    for id, name, address, city, zip, bed, type, visits, medical, medicare, other, self, dx, his, non in results:
         hoptial_dict = {}
         hoptial_dict["oshpd_id"] = id
         hoptial_dict["facility_name"] = name
@@ -215,9 +216,45 @@ def ed():
         hoptial_dict["Medi_Cal"] = medical
         hoptial_dict["Medicare"] = medicare
         hoptial_dict["Other_Payer"] = other
+        hoptial_dict["SelfPay"] = self
+        hoptial_dict["DX_Symptoms"] = dx
+        hoptial_dict["HispanicorLatino"] = his
+        hoptial_dict["Non-HispanicorNon-Latino"] = non
+
         all_hospitals.append(hoptial_dict)
 
     return jsonify(all_hospitals)
+
+@app.route("/api/v1.0/food")
+def food():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of dates for each prcp value"""
+    # Query all dates and tobs
+    results = session.query(Food.Name, Food.Description, Food.Latitude, Food.Longitude, Food.Type, Food.StreetAddress, Food.City, Food.State, Food.ZipCode).\
+        order_by(Food.Name).all()
+
+    session.close()
+
+    # Create a dictionary from the row data and append to a list of all_facilities
+    all_food_pantries = []
+    for name, desc, lat, lon, tyoe, address, city, st, zip in results:
+        food_pantries_dict = {}
+        food_pantries_dict["name"] = name
+        food_pantries_dict["Description"] = desc
+        food_pantries_dict["Latitude"] = lat
+        food_pantries_dict["Longitude"] = lon
+        food_pantries_dict["Type"] = tyoe
+        food_pantries_dict["StreetAddress"] = address
+        food_pantries_dict["City"] = city
+        food_pantries_dict["State"] = st
+        food_pantries_dict["ZipCode"] = zip
+        
+        # food_pantries_dict["Count"] = count
+        all_food_pantries.append(food_pantries_dict)
+
+    return jsonify(all_food_pantries)
 
 
 #################################################
