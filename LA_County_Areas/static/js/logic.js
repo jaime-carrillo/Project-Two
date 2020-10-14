@@ -105,32 +105,62 @@ d3.json(geoData, function(income_data) {
     console.log(url)
 
     // Grab the data with d3
-    var test = d3.json(url, function(response) {
+    d3.json(url, function(response) {
 
-        // Create a new marker cluster group
-        var markers = L.markerClusterGroup();
+        // var parentGroup = L.markerClusterGroup()
 
-        // Loop through data
-        for (var i = 0; i < response.length; i++) {
+        // Create feature group
+        test = L.featureGroup(getArrayOfMarkers())
 
-            // Set the data location property to a variable
-            var lat = response[i].LATITUDE;
-            var lon = response[i].LONGITUDE;
+        // test = L.featureGroup.subGroup(
+        //     parentGroup,
+        //     getArrayOfMarkers()
+        // )
 
-            // Check for location property
-            if (location) {
+        //Create function to get an array of the lat and lon
 
-                // Add a new marker to the cluster group and bind a pop-up
-                markers.addLayer(L.marker([lat, lon])
-                    .bindPopup(response[i].FACILITY_NAME));
+        function getArrayOfMarkers() {
+            var result = [];
+            var popup = [];
+
+            for (var i = 0; i < response.length; i += 1) {
+
+                if (location) {
+                    var lat = response[i].LATITUDE;
+                    var lon = response[i].LONGITUDE;
+                    var name = response[i].FACILITY_NAME
+
+                    result.push(L.marker([lat, lon]));
+                    popup.push(name);
+                    //result.push([lat, lon])
+
+                }
             }
-
+            return result;
         }
 
-        // Add our marker cluster layer to the map
-        // myMap.addLayer(markers);
+        //Create function to get faclity name for popups
+
+        function getPopups() {
+            var popup = [];
+
+            for (var i = 0; i < response.length; i += 1) {
+
+                if (location) {
+                    var name = response[i].FACILITY_NAME
+                    popup.push(name);
+
+                }
+            }
+            // console.log(popup)
+            return popup;
+        }
+
+        test.bindPopup(getPopups()).openPopup();
+
 
     });
+
 
     //Set up health distric boundries
     var link = "static/data/hd.geojson"
@@ -174,6 +204,18 @@ d3.json(geoData, function(income_data) {
     });
 
 });
+
+
+
+// var map = L.map("map"),
+//   parentGroup = L.markerClusterGroup(options), // Could be any other Layer Group type.
+//   // This is where the magic happens!
+//   mySubGroup = L.featureGroup.subGroup(parentGroup, arrayOfMarkers);
+
+// parentGroup.addTo(map);
+// mySubGroup.addTo(map);
+
+
 
 function createMap(income, health_districts, spa, test) {
 

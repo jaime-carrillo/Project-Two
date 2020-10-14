@@ -1,6 +1,6 @@
 // Store API query variables
 var baseURL = "http://127.0.0.1:5000";
-var option = "/api/v1.0/hospitals&encounters";
+var option = "/api/v1.0/profiles";
 
 // Assemble API query URL
 var url = baseURL + option
@@ -18,28 +18,26 @@ function getValues(id) {
     // Fetch the JSON data and console log it
     d3.json(url).then(importedData => {
         // console.log(importedData.names);
-        //console.log(importedData)
+        // console.log(importedData)
         // console.log(importedData.samples.otu_ids)
         // console.log(importedData.samples[0].sample_values)
 
         labels = []
         values = []
         beds = []
-        ids = []
         importedData.forEach(function(obj) {
-            var label = obj.FACILITY_NAME
+            var label = obj.GEONAME
             labels.push(label)
 
-            var value = obj.NET_TOT
+            var value = obj.Median_incoms
             values.push(value)
 
-            var bed = obj.TOTAL_NUMBER_BEDS
+            var bed = obj.Pop_Tot
             beds.push(bed)
 
-            var id = obj.ID
-            ids.push(id)
         });
-        console.log(ids);
+
+        // console.log(ids);
 
         // create labels
         //var labels = importedData.map(d => d.FACILITY_NAME)
@@ -48,7 +46,7 @@ function getValues(id) {
         // Create your trace.
         var trace = {
             x: values,
-            y: ids,
+            y: labels,
             text: labels,
             type: "bar",
             orientation: "h"
@@ -62,7 +60,9 @@ function getValues(id) {
             title: "title",
             yaxis: {
                 tickmode: "linear",
-            }
+            },
+            height: 1200,
+            width: 800
         };
 
         // Plot the chart to a div tag with id "bar"
@@ -70,14 +70,14 @@ function getValues(id) {
 
         // Create data array for bubble chart
         var trace1 = {
-            x: ids,
-            y: values,
+            x: values,
+            y: beds,
             mode: "markers",
             marker: {
-                size: beds,
-                color: ids
+                size: beds //,
+                    //color: labels
             },
-            text: importedData[0].ids
+            text: importedData[0].GEONAME
 
         };
 
@@ -100,17 +100,46 @@ function getValues(id) {
 // On change to the DOM, call getData()
 function getData(id) {
     d3.json(url).then((data) => {
-        var demoData = data;
         // console.log(demoData)
 
-        // demoData = []
-        // importedData.forEach(function(obj) {
-        //     demoData.push(obj)
-        // })
+        // demoData = data
+        // console.log(data)
+
+        demoData = []
+        console.log(demoData)
+
+        data.forEach(function(obj) {
+            profile_dict = {}
+            profile_dict["GEONAME"] = obj.GEONAME
+            profile_dict["Pop_Tot"] = obj.Pop_Tot
+                // profile_dict["Pop_Tot_Per"] = totP
+                // profile_dict["Prop_65y"] = age
+                // profile_dict["Prop_65y_rank"] = age_r
+                // profile_dict["Poverty"] = poverty
+                // profile_dict["Poverty_rank"] = povertyR
+                // profile_dict["Median_incoms"] = mi
+                // profile_dict["MI_rank"] = mirank
+                // profile_dict["Farmers_market"] = market
+                // profile_dict["Farmers_market_rank"] = marketrank
+                // profile_dict["Food_insecurity"] = food
+                // profile_dict["Food_insecurity_rank"] = foorank
+                // profile_dict["School_Meals"] = meal
+                // profile_dict["School_Meals_rank"] = mealrank
+                // profile_dict["Health_index"] = idx
+                // profile_dict["Health_index_rank"] = idxrank
+
+            demoData.push(profile_dict)
+                // console.log(profile_dict)
+        })
+        console.log(id)
+
 
         // define variable to filter data
-        var info = demoData.filter(d => d.toString() === id)[0];
-        // console.log(info[0].ID)
+        // var info = demoData.filter(d => d === id)[0];
+        var info = demoData.filter(d => d.GEONAME == id)
+            // console.log(info[0].ID)
+
+        console.log(info[0].GEONAME)
 
         // select demographic data
         var demoInfo = d3.select("#sample-metadata");
@@ -119,12 +148,16 @@ function getData(id) {
         demoInfo.html("");
 
         // get demographic data for the id and append to panel
-        Object.entries(info).forEach((key) => {
-            demoInfo.append("h5").text(key[0].toUpperCase() + ": " + key[1]);
-        });
+        // Object.values(info).forEach((key) => {
+        //     demoInfo.append("h5").text(info[0].GEONAME + ": " + info[1] + "\n")
+        // });
+
+
+        demoInfo.append("h5").text("Name: " + info[0].GEONAME + "\n" + "Total Population: " + info[0].Pop_Tot + "\n")
 
     })
 }
+
 
 //         // Enter a speed between 0 and 180
 //         var level = info.wfreq * 20.5 //info.wfreq;
@@ -225,19 +258,40 @@ function init() {
 
     // read the data 
     d3.json(url).then((data) => {
-        ids = Object.keys(data)
-        console.log(ids)
+
+        names = []
+        data.forEach(function(obj) {
+                var label = obj.GEONAME
+                names.push(label)
+            })
+            // console.log(names)
 
         //get ids for dropdow
-        ids.forEach(function(ID) {
+        names.forEach(function(ID) {
             dropdownMenu.append("option").text(ID).property("value");
         })
 
         // call functions to display plot
-        getValues(ids);
-        getData(ids);
+        getValues(names[0]);
+        getData(names[0]);
 
     })
 }
+
+// function init() {
+
+//     var dropdown = d3.select("#selDataset");
+
+//     d3.json("samples.json").then((data) => {
+
+//         data.names.forEach(function(name) {
+//             dropdown.append("option").text(name).property("value");
+//         });
+
+//         buildPlots(data.names[0]);
+//         demoInfo(data.names[0])
+//     });
+// }
+
 
 init();
