@@ -40,21 +40,21 @@ d3.json(geoData, function(income_data) {
     function chooseColor(objectid) {
         switch (objectid) {
             case "1":
-                return "red";
-            case "2":
                 return "orange";
-            case "3":
+            case "2":
                 return "yellow";
-            case "4":
+            case "3":
                 return "green";
-            case "5":
-                return "blue";
-            case "6":
+            case "4":
                 return "purple";
+            case "5":
+                return "green";
+            case "6":
+                return "yellow";
             case "7":
-                return "teal";
+                return "orange";
             case "8":
-                return "pink";
+                return "purple";
             default:
                 return "grey";
         }
@@ -96,6 +96,42 @@ d3.json(geoData, function(income_data) {
             }) //.addTo(myMap)
     });
 
+    // Store API query variables
+    var baseURL = "http://127.0.0.1:5000";
+    var option = "/api/v1.0/hospitals";
+
+    // Assemble API query URL
+    var url = baseURL + option
+    console.log(url)
+
+    // Grab the data with d3
+    var test = d3.json(url, function(response) {
+
+        // Create a new marker cluster group
+        var markers = L.markerClusterGroup();
+
+        // Loop through data
+        for (var i = 0; i < response.length; i++) {
+
+            // Set the data location property to a variable
+            var lat = response[i].LATITUDE;
+            var lon = response[i].LONGITUDE;
+
+            // Check for location property
+            if (location) {
+
+                // Add a new marker to the cluster group and bind a pop-up
+                markers.addLayer(L.marker([lat, lon])
+                    .bindPopup(response[i].FACILITY_NAME));
+            }
+
+        }
+
+        // Add our marker cluster layer to the map
+        // myMap.addLayer(markers);
+
+    });
+
     //Set up health distric boundries
     var link = "static/data/hd.geojson"
 
@@ -134,12 +170,12 @@ d3.json(geoData, function(income_data) {
             }) //.addTo(myMap)
 
         // Sending income, districts, and spa layer to the createMap function
-        createMap(income, health_districts, spa);
+        createMap(income, health_districts, spa, test);
     });
 
 });
 
-function createMap(income, health_districts, spa) {
+function createMap(income, health_districts, spa, test) {
 
     // Create tile layer
     var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -160,7 +196,8 @@ function createMap(income, health_districts, spa) {
     var overlays = {
         "Income": income,
         "Health Districts": health_districts,
-        "Service Planning Area": spa
+        "Service Planning Area": spa,
+        "Hospitals": test
     };
 
 
@@ -172,7 +209,8 @@ function createMap(income, health_districts, spa) {
             lightmap,
             income,
             health_districts,
-            spa
+            spa,
+            test
         ]
     });
 
