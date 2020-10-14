@@ -33,6 +33,7 @@ Hospitals = Base.classes.hospitals
 Licensed  = Base.classes.LosAnglesCountyLicData
 Encounters = Base.classes.encounters
 Hospitals_Encounters = Base.classes.hospitals_avg_encounters
+Ed = Base.classes.LA_ed_data
 
 #################################################
 # Flask Setup
@@ -55,6 +56,7 @@ def welcome():
         f"/api/v1.0/facilities<br/>"
         f"/api/v1.0/encounters<br/>"
         f"/api/v1.0/hospitals&encounters<br/>"
+        f"/api/v1.0/ed<br/>"
     )
 
 
@@ -181,168 +183,42 @@ def encounters():
 
     return jsonify(all_encounters)
 
+@app.route("/api/v1.0/ed")
+def ed():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
 
-#################################################
-# /api/v1.0/stations
-# Return a JSON list of stations from the dataset.
-#################################################
+    """Return a list of dates for each prcp value"""
+    # Query all dates and tobs
+    results = session.query(Ed.oshpd_id, Ed.facility_name, Ed.DBA_ADDRESS1,Ed.DBA_CITY, Ed.DBA_ZIP_CODE, Ed.licensed_bed_size, Ed.control_type_desc, Ed.ED_Visit, Ed.Medi_Cal, Ed.Medicare, Ed.Other_Payer).\
+        order_by(Ed.oshpd_id).all()
 
-# @app.route("/api/v1.0/stations")
-# def stations():
-#     # Create our session (link) from Python to the DB
-#     session = Session(engine)
-
-#     """Return a list of all passenger names"""
-#     # Query all stations
-#     results = session.query(Station.station).all()
-
-#     session.close()
-
-#     # Convert list of tuples into normal list
-#     all_stations = list(np.ravel(results))
-
-#     return jsonify(all_stations)
+    # results = session.query(Hospitals_Encounters.OSHPD_ID, Hospitals_Encounters.LATITUDE).\
+    #     order_by(Hospitals_Encounters.OSHPD_ID).all()
 
 
-#################################################
-# /api/v1.0/tobs
-# Query the dates and temperature observations of the most active station for the last year of data.
-# Return a JSON list of temperature observations (TOBS) for the previous year.
-#################################################
+    session.close()
 
-# @app.route("/api/v1.0/tobs")
-# def tobs():
-#     # Create our session (link) from Python to the DB
-#     session = Session(engine)
+    # Create a dictionary from the row data and append to a list of all_hospitals
+    all_hospitals = []
 
-#     """Return a list of all passenger names"""
-#     # Query most active station
-#     active_station = session.query(Measurement.station, func.round(func.count(Measurement.tobs))).\
-#     group_by(Measurement.station).order_by(func.round(func.count(Measurement.tobs)).desc()).all()
-    
-#     active_station_name = active_station[0][0]
-    
-#     # Query all dates in the last year for most active station
-#     results = session.query(Measurement.station, Measurement.date, Measurement.tobs).\
-#             filter(active_station_name == Measurement.station).\
-#             filter(Measurement.date >= '2016-08-23').\
-#             order_by(Measurement.date).all()
+    for id, name, address, city, zip, bed, type, visits, medical, medicare, other in results:
+        hoptial_dict = {}
+        hoptial_dict["oshpd_id"] = id
+        hoptial_dict["facility_name"] = name
+        hoptial_dict["DBA_ADDRESS1"] = address
+        hoptial_dict["DBA_CITY"] = city
+        hoptial_dict["DBA_ZIP_CODE"] = zip
+        hoptial_dict["licensed_bed_size"] = bed
+        hoptial_dict["control_type_desc"] = type
+        hoptial_dict["ED_Visit"] = visits
+        hoptial_dict["Medi_Cal"] = medical
+        hoptial_dict["Medicare"] = medicare
+        hoptial_dict["Other_Payer"] = other
+        all_hospitals.append(hoptial_dict)
 
-#     session.close()
+    return jsonify(all_hospitals)
 
-#     return jsonify(results)   
-
-
-#################################################
-# /api/v1.0/<start> and /api/v1.0/<start>/<end>
-# Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
-#################################################
-
-#################################################
-# When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
-#################################################
-
-# @app.route("/api/v1.0/<start>/<end>")
-# def Stats_start_end(start, end):
-#     """Fetch the stats for that match the start and end dates for
-#        the path variable supplied by the user, or a 404 if not."""
-
-#     # Create our session (link) from Python to the DB
-#     session = Session(engine)
-
-#     # canonicalized = real_name.replace(" ", "").lower()
-#     # for character in justice_league_members:
-#     #     search_term = character["real_name"].replace(" ", "").lower()
-
-#     try:
-
-#         sel = [Station.id,
-#             Station.station, 
-#             func.round(func.min(Measurement.tobs)), 
-#             func.round(func.max(Measurement.tobs)), 
-#             func.round(func.avg(Measurement.tobs)), 
-#             func.round(func.count(Measurement.tobs))]
-
-#         start_date = dt.datetime.strptime(start, '%Y-%m-%d')
-#         end_date = dt.datetime.strptime(end, '%Y-%m-%d')
-#         max_date = session.query(func.max(Measurement.date)).scalar()
-#         check_date = dt.datetime.strptime(max_date, '%Y-%m-%d')
-
-#         if start_date <= check_date and end_date > start_date:
-#             station_stats_query =  session.query(*sel).group_by(Station.station).filter(Station.station == Measurement.station).filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
-            
-#         # Create a dictionary from the row data and append to a list of station_stats
-#             station_stats = []
-#             for id, station, min, max, avg, count in station_stats_query:
-#                 station_stats_dict = {}
-#                 station_stats_dict["ID"] = id
-#                 station_stats_dict["Station"] = station
-#                 station_stats_dict["Max"] = max
-#                 station_stats_dict["Min"] = min
-#                 station_stats_dict["Avg"] = avg
-#                 station_stats_dict["Count"] = count
-#                 station_stats.append(station_stats_dict)
-#             return jsonify(station_stats)
-
-
-#         else:
-#             return jsonify({"error": f"statistics with a start date of {start} or {end} is not found."}), 404
-    
-#     except:
-#         jsonify(f"Date format {start} or {end} not vaild . Please use YYYY-MM-DD")
-
-
-#################################################
-# When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
-#################################################
-
-# @app.route("/api/v1.0/<start>")
-# def Stats_start_only(start):
-#     """Fetch the stats for that match the start and end dates for
-#        the path variable supplied by the user, or a 404 if not."""
-
-#     # Create our session (link) from Python to the DB
-#     session = Session(engine)
-
-#     # canonicalized = real_name.replace(" ", "").lower()
-#     # for character in justice_league_members:
-#     #     search_term = character["real_name"].replace(" ", "").lower()
-
-#     try:
-
-#         sel = [Station.id,
-#             Station.station, 
-#             func.round(func.min(Measurement.tobs)), 
-#             func.round(func.max(Measurement.tobs)), 
-#             func.round(func.avg(Measurement.tobs)), 
-#             func.round(func.count(Measurement.tobs))]
-
-#         start_date = dt.datetime.strptime(start, '%Y-%m-%d')
-#         max_date = session.query(func.max(Measurement.date)).scalar()
-#         check_date = dt.datetime.strptime(max_date, '%Y-%m-%d')
-
-#         if start_date <= check_date:
-#             station_stats_query =  session.query(*sel).group_by(Station.station).filter(Station.station == Measurement.station).filter(Measurement.date >= start_date).all()
-            
-#         # Create a dictionary from the row data and append to a list of station_stats
-#             station_stats = []
-#             for id, station, min, max, avg, count in station_stats_query:
-#                 station_stats_dict = {}
-#                 station_stats_dict["ID"] = id
-#                 station_stats_dict["Station"] = station
-#                 station_stats_dict["Max"] = max
-#                 station_stats_dict["Min"] = min
-#                 station_stats_dict["Avg"] = avg
-#                 station_stats_dict["Count"] = count
-#                 station_stats.append(station_stats_dict)
-#             return jsonify(station_stats)
-
-
-#         else:
-#             return jsonify({"error": f"statistics with a start date of {start} is not found."}), 404
-    
-#     except:
-#         jsonify(f"Date format {start} not vaild . Please use YYYY-MM-DD")
 
 #################################################
 # Code to run app

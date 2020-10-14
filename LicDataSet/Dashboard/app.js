@@ -22,25 +22,6 @@ function getValues(id) {
         // console.log(importedData.samples.otu_ids)
         // console.log(importedData.samples[0].sample_values)
 
-        // arr = []
-        // for (i = 0; i < importedData.length; i++) {
-        //     var ids = importedData[i].ID
-        //     arr.push(ids)
-        // }
-        // console.log(arr)
-
-        // Use the map method with the arrow function to return all the filtered movie titles.
-        //var ids = Object.keys(importedData)
-        // console.log(ids)
-
-        // var values = ids.map(id => id.NET_TOT)
-        //console.log(values)
-
-        //var beds = importedData.map(d => d.Total_beds)
-
-        // var ids = importedData[0].ID
-        // var values = importedData[0].Net_Total
-        //console.log(values)
         labels = []
         values = []
         beds = []
