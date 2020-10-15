@@ -294,7 +294,7 @@ def profiles():
     # Query all dates and tobs
     results = session.query(Profiles.GEONAME, Profiles.Pop_Tot, Profiles.Pop_Tot_Per, Profiles.Prop_65y, Profiles.Prop_65y_rank, Profiles.Poverty, Profiles.Poverty_rank,Profiles.Median_incoms, Profiles.MI_rank, Profiles.Farmers_market,Profiles.Farmers_market_rank, Profiles.Food_insecurity, Profiles.Food_insecurity_rank, Profiles.School_Meals, Profiles.School_Meals_rank, Profiles.Health_index, Profiles.Health_index_rank ).\
         order_by(Profiles.Health_index).all()
-
+        
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_proflies

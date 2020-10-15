@@ -6,12 +6,6 @@ var option = "/api/v1.0/profiles";
 var url = baseURL + option
 console.log(url)
 
-// d3.json(url).then(importedData => {
-//     // console.log(importedData.names);
-//     console.log(importedData[0])
-// })
-
-
 function getValues(id) {
 
     // Fetch the JSON data and console log it
@@ -40,11 +34,9 @@ function getValues(id) {
 
         });
 
-        // console.log(ids);
-
-        // create labels
-        //var labels = importedData.map(d => d.FACILITY_NAME)
-        // console.log(labels)
+        //#############################################################
+        // Create bar chart
+        //#############################################################
 
         // Create your trace.
         var trace = {
@@ -126,8 +118,11 @@ function getValues(id) {
 
 }
 
-
+//#############################################################
 // On change to the DOM, call getData()
+//#############################################################
+
+
 function getData(id) {
     d3.json(url).then((data) => {
         // console.log(demoData)
@@ -163,8 +158,10 @@ function getData(id) {
         })
         console.log(id)
 
-
+        //#############################################################
         // define variable to filter data
+        //#############################################################
+
         // var info = demoData.filter(d => d === id)[0];
         var info = demoData.filter(d => d.GEONAME == id)
             // console.log(info[0].ID)
@@ -181,17 +178,21 @@ function getData(id) {
         // info.forEach((x) => {
         //     demoInfo.append("h5").text(x[0])
 
-        demoInfo.append("h4").text(info[0].GEONAME + "Total Population: " + info[0].Pop_Tot + " (" + info[0].Pop_Tot_Per + ")" + "\n")
-            .append("h5").text("Over 65: " + info[0].Prop_65y)
-            .append("h5").text("Median Income: " + info[0].Median_incoms)
-            .append("h5").text("Food Insecurity: " + info[0].Food_insecurity)
-            .append("h5").text("Health Index: " + info[0].Health_index)
+        demoInfo.append("h4").text(info[0].GEONAME)
+            .append("h4").text("Total Population: " + info[0].Pop_Tot + " (" + info[0].Pop_Tot_Per + ")" + "\n")
+            .append("h6").text("Over 65: " + info[0].Prop_65y)
+            .append("h6").text("Median Income: " + info[0].Median_incoms)
+            .append("h6").text("Food Insecurity: " + info[0].Food_insecurity)
+            .append("h6").text("Health Index: " + info[0].Health_index)
             //     })
             // }
 
+        //#############################################################
+        // Gauge for dynamic district
+        //#############################################################
 
         // Enter a speed between 0 and 180
-        var level = info[0].Health_index * 1.75 //info.wfreq;
+        var level = info[0].Health_index * 1.71 //info.wfreq;
 
         // Trig to calc meter point
         var degrees = 180 - level,
@@ -214,8 +215,8 @@ function getData(id) {
                 y: [0],
                 marker: { size: 14, color: '850000' },
                 showlegend: false,
-                name: 'speed',
-                text: level,
+                name: 'Index',
+                text: info[0].Health_index,
                 hoverinfo: 'text+name'
             },
             {
@@ -225,8 +226,7 @@ function getData(id) {
                 textinfo: 'text',
                 textposition: 'inside',
                 marker: {
-                    colors: ['#699c2b', '#73a842',
-                        '#7fb356', '#8ebe6b', '#9fc97f', '#b2d494', '#c5dea8', '#dae7bd', '#f1f1d2', '#f1f1d2',
+                    colors: ['#8ebe6b', '#9fc97f', '#b2d494', '#c5dea8', '#dae7bd', '#f1f1d2',
                         'rgba(0, 0, 0, 0)'
                     ]
                 },
@@ -241,12 +241,98 @@ function getData(id) {
             shapes: [{
                 type: 'path',
                 path: path,
-                fillcolor: '850000',
+                fillcolor: 'rgba(0, 0, 0, 0)',
                 line: {
                     color: '850000'
                 }
             }],
-            title: "Belly Button Washing Frequency",
+            title: info[0].GEONAME,
+            subtitle: 'Plot Subtitle',
+            height: 370,
+            width: 370,
+            xaxis: {
+                zeroline: false,
+                showticklabels: false,
+                showgrid: false,
+                range: [-1, 1],
+                titlefont: {
+                    title: 'x Axis',
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#7f7f7f'
+                }
+            },
+            yaxis: {
+                zeroline: false,
+                showticklabels: false,
+                showgrid: false,
+                range: [-1, 1]
+            }
+        };
+
+        //Plot gauge chart
+        Plotly.newPlot('gauge1', data2, layout2);
+
+        //#############################################################
+        // Gauge for Los Angles County Average
+        //#############################################################
+        var benchmark = 44.73372093
+            // Enter a speed between 0 and 180
+        var level = benchmark * 1.71 //info.wfreq;
+
+        // Trig to calc meter point
+        var degrees = 180 - level,
+            radius = .5;
+        var radians = degrees * Math.PI / 180;
+        var x = radius * Math.cos(radians);
+        var y = radius * Math.sin(radians);
+        var path1 = (degrees < 45 || degrees > 135) ? 'M -0.0 -0.025 L 0.0 0.025 L ' : 'M -0.025 -0.0 L 0.025 0.0 L ';
+        // Path: may have to change to create a better triangle
+        var mainPath = path1,
+            pathX = String(x),
+            space = ' ',
+            pathY = String(y),
+            pathEnd = ' Z';
+        var path = mainPath.concat(pathX, space, pathY, pathEnd);
+
+        var data2 = [{
+                type: 'scatter',
+                x: [0],
+                y: [0],
+                marker: { size: 14, color: '850000' },
+                showlegend: false,
+                name: 'Index',
+                text: benchmark,
+                hoverinfo: 'text+name'
+            },
+            {
+                values: [1, 1, 1, 1, 1, 1, 6],
+                rotation: 90,
+                text: ['100', '80', '60', '40', '20', '0', ''],
+                textinfo: 'text',
+                textposition: 'inside',
+                marker: {
+                    colors: ['#8ebe6b', '#9fc97f', '#b2d494', '#c5dea8', '#dae7bd', '#f1f1d2',
+                        'rgba(0, 0, 0, 0)'
+                    ]
+                },
+                hoverinfo: 'label',
+                hole: .5,
+                type: 'pie',
+                showlegend: false
+            }
+        ];
+
+        var layout2 = {
+            shapes: [{
+                type: 'path',
+                path: path,
+                fillcolor: 'rgba(0, 0, 0, 0)',
+                line: {
+                    color: '850000'
+                }
+            }],
+            title: 'Los Angles County',
             subtitle: 'Plot Subtitle',
             height: 400,
             width: 400,
@@ -271,8 +357,10 @@ function getData(id) {
         };
 
         //Plot gauge chart
-        Plotly.newPlot('gauge1', data2, layout2);
+        Plotly.newPlot('gauge2', data2, layout2);
     });
+
+
 
 }
 
