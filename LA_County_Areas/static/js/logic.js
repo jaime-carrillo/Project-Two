@@ -23,7 +23,7 @@ d3.json(geoData, function(income_data) {
                 // Border color
                 color: "#fff",
                 weight: 1,
-                fillOpacity: 0.7
+                fillOpacity: 0.9
             },
 
             // Binding a pop-up to each layer
@@ -68,7 +68,7 @@ d3.json(geoData, function(income_data) {
                     return {
                         color: chooseColor(feature.properties.objectid),
                         //fillColor: "blue", //chooseColor(feature.properties.area),
-                        fillOpacity: 0,
+                        fillOpacity: .9,
                         weight: 3
                     }
                 },
@@ -77,13 +77,13 @@ d3.json(geoData, function(income_data) {
                         mouseover: function(event) {
                             layer = event.target
                             layer.setStyle({
-                                fillOpacity: .5
+                                fillOpacity: .2
                             });
                         },
                         mouseout: function(event) {
                                 layer = event.target
                                 layer.setStyle({
-                                    fillOpacity: 0
+                                    fillOpacity: .7
                                 })
                             }
                             // ,
@@ -105,32 +105,62 @@ d3.json(geoData, function(income_data) {
     console.log(url)
 
     // Grab the data with d3
-    var test = d3.json(url, function(response) {
+    d3.json(url, function(response) {
 
-        // Create a new marker cluster group
-        var markers = L.markerClusterGroup();
+        // var parentGroup = L.markerClusterGroup()
 
-        // Loop through data
-        for (var i = 0; i < response.length; i++) {
+        // Create feature group
+        test = L.featureGroup(getArrayOfMarkers())
 
-            // Set the data location property to a variable
-            var lat = response[i].LATITUDE;
-            var lon = response[i].LONGITUDE;
+        // test = L.featureGroup.subGroup(
+        //     parentGroup,
+        //     getArrayOfMarkers()
+        // )
 
-            // Check for location property
-            if (location) {
+        //Create function to get an array of the lat and lon
 
-                // Add a new marker to the cluster group and bind a pop-up
-                markers.addLayer(L.marker([lat, lon])
-                    .bindPopup(response[i].FACILITY_NAME));
+        function getArrayOfMarkers() {
+            var result = [];
+            var popup = [];
+
+            for (var i = 0; i < response.length; i += 1) {
+
+                if (location) {
+                    var lat = response[i].LATITUDE;
+                    var lon = response[i].LONGITUDE;
+                    var name = response[i].FACILITY_NAME
+
+                    result.push(L.marker([lat, lon]));
+                    popup.push(name);
+                    //result.push([lat, lon])
+
+                }
             }
-
+            return result;
         }
 
-        // Add our marker cluster layer to the map
-        // myMap.addLayer(markers);
+        //Create function to get faclity name for popups
+
+        function getPopups() {
+            var popup = [];
+
+            for (var i = 0; i < response.length; i += 1) {
+
+                if (location) {
+                    var name = response[i].FACILITY_NAME
+                    popup.push(name);
+
+                }
+            }
+            // console.log(popup)
+            return popup;
+        }
+
+        test.bindPopup(getPopups()).openPopup();
+
 
     });
+
 
     //Set up health distric boundries
     var link = "static/data/hd.geojson"
@@ -142,7 +172,7 @@ d3.json(geoData, function(income_data) {
                     return {
                         color: "black",
                         //fillColor: "blue", //chooseColor(feature.properties.borough),
-                        fillOpacity: 0,
+                        fillOpacity: .2,
                         weight: 2
                     }
                 },
@@ -151,13 +181,13 @@ d3.json(geoData, function(income_data) {
                         mouseover: function(event) {
                             layer = event.target
                             layer.setStyle({
-                                fillOpacity: .5
+                                fillOpacity: .8
                             });
                         },
                         mouseout: function(event) {
                                 layer = event.target
                                 layer.setStyle({
-                                    fillOpacity: 0
+                                    fillOpacity: .2
                                 })
                             }
                             // ,
@@ -175,6 +205,18 @@ d3.json(geoData, function(income_data) {
 
 });
 
+
+
+// var map = L.map("map"),
+//   parentGroup = L.markerClusterGroup(options), // Could be any other Layer Group type.
+//   // This is where the magic happens!
+//   mySubGroup = L.featureGroup.subGroup(parentGroup, arrayOfMarkers);
+
+// parentGroup.addTo(map);
+// mySubGroup.addTo(map);
+
+
+
 function createMap(income, health_districts, spa, test) {
 
     // Create tile layer
@@ -187,9 +229,32 @@ function createMap(income, health_districts, spa, test) {
         accessToken: API_KEY
     })
 
+    var darktmap = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+            attribution: 'Stamen'
+        }) //.addTo(map);
+
+    //Experment
+    var interaction = cartodb.createLayer(map, 'http://documentation.cartodb.com/api/v2/viz/2b13c956-e7c1-11e2-806b-5404a6a683d5/viz.json')
+        .addTo(map)
+        .on('done', function(layer) {
+
+            layer.setInteraction(true);
+
+            layer.on('featureOver', function(e, latlng, pos, data) {
+                cartodb.log.log(e, latlng, pos, data);
+            });
+
+            layer.on('error', function(err) {
+                cartodb.log.log('error: ' + err);
+            });
+        }).on('error', function() {
+            cartodb.log.log("some error occurred");
+        });
+
     // Create a baseMaps object to hold the lightmap layer
     var baseMaps = {
-        "Ligh map": lightmap
+        "Ligh map": lightmap,
+        "Dark map": darktmap
     };
 
     // Create an overlays object to add to the layer control
@@ -199,7 +264,6 @@ function createMap(income, health_districts, spa, test) {
         "Service Planning Area": spa,
         "Hospitals": test
     };
-
 
     // Create the map with our layers
     var myMap = L.map("map", {

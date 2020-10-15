@@ -36,6 +36,10 @@ Hospitals_Encounters = Base.classes.hospitals_avg_encounters
 Ed = Base.classes.LA_ed_data
 Food = Base.classes.Food_Pantry
 Access = Base.classes.AccessToCare
+<<<<<<< HEAD
+=======
+Profiles = Base.classes.Health_Profiles
+>>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
 
 #################################################
 # Flask Setup
@@ -61,6 +65,10 @@ def welcome():
         f"/api/v1.0/ed<br/>"
         f"/api/v1.0/food<br/>"
         f"/api/v1.0/hd<br/>"
+<<<<<<< HEAD
+=======
+        f"/api/v1.0/profiles<br/>"
+>>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
     )
 
 
@@ -282,6 +290,48 @@ def hd():
 
     return jsonify(all_access)
 
+<<<<<<< HEAD
+=======
+
+@app.route("/api/v1.0/profiles")
+def profiles():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of dates for each prcp value"""
+    # Query all dates and tobs
+    results = session.query(Profiles.GEONAME, Profiles.Pop_Tot, Profiles.Pop_Tot_Per, Profiles.Prop_65y, Profiles.Prop_65y_rank, Profiles.Poverty, Profiles.Poverty_rank,Profiles.Median_incoms, Profiles.MI_rank, Profiles.Farmers_market,Profiles.Farmers_market_rank, Profiles.Food_insecurity, Profiles.Food_insecurity_rank, Profiles.School_Meals, Profiles.School_Meals_rank, Profiles.Health_index, Profiles.Health_index_rank ).\
+        order_by(Profiles.Health_index).all()
+        
+    session.close()
+
+    # Create a dictionary from the row data and append to a list of all_proflies
+    all_proflies = []
+    for name, tot, totP, age, age_r, poverty, povertyR, mi, mirank, market, marketrank, food, foorank, meal, mealrank, idx, idxrank in results:
+        profile_dict = {}
+        profile_dict["GEONAME"] = name
+        profile_dict["Pop_Tot"] = tot
+        profile_dict["Pop_Tot_Per"] = totP
+        profile_dict["Prop_65y"] = age
+        profile_dict["Prop_65y_rank"] = age_r
+        profile_dict["Poverty"] = poverty
+        profile_dict["Poverty_rank"] = povertyR
+        profile_dict["Median_incoms"] = mi
+        profile_dict["MI_rank"] = mirank
+        profile_dict["Farmers_market"] = market
+        profile_dict["Farmers_market_rank"] = marketrank
+        profile_dict["Food_insecurity"] = food
+        profile_dict["Food_insecurity_rank"] = foorank
+        profile_dict["School_Meals"] = meal
+        profile_dict["School_Meals_rank"] = mealrank
+        profile_dict["Health_index"] = idx
+        profile_dict["Health_index_rank"] = idxrank
+
+        all_proflies.append(profile_dict)
+
+    return jsonify(all_proflies)
+
+>>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
 
 #################################################
 # Code to run app
