@@ -36,10 +36,7 @@ Hospitals_Encounters = Base.classes.hospitals_avg_encounters
 Ed = Base.classes.LA_ed_data
 Food = Base.classes.Food_Pantry
 Access = Base.classes.AccessToCare
-<<<<<<< HEAD
-=======
 Profiles = Base.classes.Health_Profiles
->>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
 
 #################################################
 # Flask Setup
@@ -65,10 +62,7 @@ def welcome():
         f"/api/v1.0/ed<br/>"
         f"/api/v1.0/food<br/>"
         f"/api/v1.0/hd<br/>"
-<<<<<<< HEAD
-=======
         f"/api/v1.0/profiles<br/>"
->>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
     )
 
 
@@ -290,8 +284,6 @@ def hd():
 
     return jsonify(all_access)
 
-<<<<<<< HEAD
-=======
 
 @app.route("/api/v1.0/profiles")
 def profiles():
@@ -331,7 +323,6 @@ def profiles():
 
     return jsonify(all_proflies)
 
->>>>>>> 0d0bc62cfea6064e382e742dad06de27a1062de5
 
 #################################################
 # Code to run app
