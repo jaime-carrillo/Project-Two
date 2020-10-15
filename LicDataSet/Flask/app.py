@@ -35,6 +35,7 @@ Encounters = Base.classes.encounters
 Hospitals_Encounters = Base.classes.hospitals_avg_encounters
 Ed = Base.classes.LA_ed_data
 Food = Base.classes.Food_Pantry
+Access = Base.classes.AccessToCare
 
 #################################################
 # Flask Setup
@@ -59,6 +60,7 @@ def welcome():
         f"/api/v1.0/hospitals&encounters<br/>"
         f"/api/v1.0/ed<br/>"
         f"/api/v1.0/food<br/>"
+        f"/api/v1.0/hd<br/>"
     )
 
 
@@ -255,6 +257,30 @@ def food():
         all_food_pantries.append(food_pantries_dict)
 
     return jsonify(all_food_pantries)
+
+@app.route("/api/v1.0/hd")
+def hd():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of dates for each prcp value"""
+    # Query all dates and tobs
+    results = session.query(Access.HealthDistrict, Access.Percent, Access.Estimated).\
+        order_by(Access.HealthDistrict).all()
+
+    session.close()
+
+    # Create a dictionary from the row data and append to a list of all_facilities
+    all_access = []
+    for name, per, est in results:
+        access_dict = {}
+        access_dict["HealthDistrict"] = name
+        access_dict["Percent"] = per
+        access_dict["Estimated"] = est
+
+        all_access.append(access_dict)
+
+    return jsonify(all_access)
 
 
 #################################################
