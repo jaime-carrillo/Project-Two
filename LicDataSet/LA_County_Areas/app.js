@@ -6,19 +6,24 @@ var option = "/api/v1.0/profiles";
 var url = baseURL + option
 console.log(url)
 
+
+//#############################################################
+//Create function to get the values from the API
+//#############################################################
+
 function getValues(id) {
 
     // Fetch the JSON data and console log it
     d3.json(url).then(importedData => {
-        // console.log(importedData.names);
         // console.log(importedData)
-        // console.log(importedData.samples.otu_ids)
-        // console.log(importedData.samples[0].sample_values)
 
+        //Create arrays for charting
         labels = []
         values = []
         population = []
         foods = []
+
+        //Create loop to append to each array for charting
         importedData.forEach(function(obj) {
             var label = obj.GEONAME
             labels.push(label)
@@ -38,7 +43,7 @@ function getValues(id) {
         // Create bar chart
         //#############################################################
 
-        // Create your trace.
+        // Create trace for health index (1)
         var trace = {
             x: labels,
             y: values,
@@ -57,6 +62,7 @@ function getValues(id) {
             }
         };
 
+        // Create trace for food insecurity (2)
         var trace2 = {
             x: labels,
             y: foods,
@@ -122,17 +128,15 @@ function getValues(id) {
 // On change to the DOM, call getData()
 //#############################################################
 
-
 function getData(id) {
     d3.json(url).then((data) => {
-        // console.log(demoData)
-
-        // demoData = data
         // console.log(data)
 
+        //Create array for charting 
         demoData = []
         console.log(demoData)
 
+        //Create loop to append to array for charting
         data.forEach(function(obj) {
             profile_dict = {}
             profile_dict["GEONAME"] = obj.GEONAME
@@ -153,6 +157,7 @@ function getData(id) {
             profile_dict["Health_index"] = obj.Health_index
                 // profile_dict["Health_index_rank"] = idxrank
 
+            //Push to array
             demoData.push(profile_dict)
                 // console.log(profile_dict)
         })
@@ -162,37 +167,31 @@ function getData(id) {
         // define variable to filter data
         //#############################################################
 
-        // var info = demoData.filter(d => d === id)[0];
+        // Filter by district name
         var info = demoData.filter(d => d.GEONAME == id)
-            // console.log(info[0].ID)
-
         console.log(info[0].GEONAME)
 
-        // select demographic data
+        // select demographic data from list
         var demoInfo = d3.select("#sample-metadata");
 
         //clear demographic info before update
         demoInfo.html("");
 
-        // get demographic data for the id and append to panel
-        // info.forEach((x) => {
-        //     demoInfo.append("h5").text(x[0])
-
+        // get demographic data for the name and append to panel
         demoInfo.append("h4").text(info[0].GEONAME)
             .append("h4").text("Total Population: " + info[0].Pop_Tot + " (" + info[0].Pop_Tot_Per + ")" + "\n")
             .append("h6").text("Over 65: " + info[0].Prop_65y)
             .append("h6").text("Median Income: " + info[0].Median_incoms)
             .append("h6").text("Food Insecurity: " + info[0].Food_insecurity)
             .append("h6").text("Health Index: " + info[0].Health_index)
-            //     })
-            // }
+
 
         //#############################################################
         // Gauge for dynamic district
         //#############################################################
 
         // Enter a speed between 0 and 180
-        var level = info[0].Health_index * 1.71 //info.wfreq;
+        var level = info[0].Health_index * 1.71
 
         // Trig to calc meter point
         var degrees = 180 - level,
@@ -209,6 +208,7 @@ function getData(id) {
             pathEnd = ' Z';
         var path = mainPath.concat(pathX, space, pathY, pathEnd);
 
+        //Create data for dynamic guage
         var data2 = [{
                 type: 'scatter',
                 x: [0],
@@ -237,6 +237,7 @@ function getData(id) {
             }
         ];
 
+        //Create layout for dynamic guage
         var layout2 = {
             shapes: [{
                 type: 'path',
@@ -270,15 +271,14 @@ function getData(id) {
             }
         };
 
-        //Plot gauge chart
+        //Plot dynamic gauge chart
         Plotly.newPlot('gauge1', data2, layout2);
 
         //#############################################################
         // Gauge for Los Angles County Average
         //#############################################################
         var benchmark = 44.73372093
-            // Enter a speed between 0 and 180
-        var level = benchmark * 1.71 //info.wfreq;
+        var level = benchmark * 1.71
 
         // Trig to calc meter point
         var degrees = 180 - level,
@@ -295,6 +295,7 @@ function getData(id) {
             pathEnd = ' Z';
         var path = mainPath.concat(pathX, space, pathY, pathEnd);
 
+        //Create data for static guage
         var data2 = [{
                 type: 'scatter',
                 x: [0],
@@ -323,6 +324,7 @@ function getData(id) {
             }
         ];
 
+        //Create layout for static guage
         var layout2 = {
             shapes: [{
                 type: 'path',
@@ -356,21 +358,23 @@ function getData(id) {
             }
         };
 
-        //Plot gauge chart
+        //Plot static gauge chart
         Plotly.newPlot('gauge2', data2, layout2);
     });
-
-
-
 }
 
+//#############################################################
 // create  function for change event
+//#############################################################
+
 function optionChanged(id) {
     getValues(id);
     getData(id);
 }
 
-
+//#############################################################
+// create initial function to get data and display plots
+//#############################################################
 function init() {
     // Assign the value of the dropdown menu option to a variable
     var dropdownMenu = d3.select("#selDataset");
@@ -396,21 +400,5 @@ function init() {
 
     })
 }
-
-// function init() {
-
-//     var dropdown = d3.select("#selDataset");
-
-//     d3.json("samples.json").then((data) => {
-
-//         data.names.forEach(function(name) {
-//             dropdown.append("option").text(name).property("value");
-//         });
-
-//         buildPlots(data.names[0]);
-//         demoInfo(data.names[0])
-//     });
-// }
-
 
 init();
