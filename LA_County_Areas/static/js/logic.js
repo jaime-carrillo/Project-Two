@@ -23,7 +23,7 @@ d3.json(geoData, function(income_data) {
                 // Border color
                 color: "#fff",
                 weight: 1,
-                fillOpacity: 0.7
+                fillOpacity: 0.9
             },
 
             // Binding a pop-up to each layer
@@ -68,7 +68,7 @@ d3.json(geoData, function(income_data) {
                     return {
                         color: chooseColor(feature.properties.objectid),
                         //fillColor: "blue", //chooseColor(feature.properties.area),
-                        fillOpacity: 0,
+                        fillOpacity: .9,
                         weight: 3
                     }
                 },
@@ -77,13 +77,13 @@ d3.json(geoData, function(income_data) {
                         mouseover: function(event) {
                             layer = event.target
                             layer.setStyle({
-                                fillOpacity: .5
+                                fillOpacity: .2
                             });
                         },
                         mouseout: function(event) {
                                 layer = event.target
                                 layer.setStyle({
-                                    fillOpacity: 0
+                                    fillOpacity: .7
                                 })
                             }
                             // ,
@@ -172,7 +172,7 @@ d3.json(geoData, function(income_data) {
                     return {
                         color: "black",
                         //fillColor: "blue", //chooseColor(feature.properties.borough),
-                        fillOpacity: 0,
+                        fillOpacity: .2,
                         weight: 2
                     }
                 },
@@ -181,13 +181,13 @@ d3.json(geoData, function(income_data) {
                         mouseover: function(event) {
                             layer = event.target
                             layer.setStyle({
-                                fillOpacity: .5
+                                fillOpacity: .8
                             });
                         },
                         mouseout: function(event) {
                                 layer = event.target
                                 layer.setStyle({
-                                    fillOpacity: 0
+                                    fillOpacity: .2
                                 })
                             }
                             // ,
@@ -229,9 +229,32 @@ function createMap(income, health_districts, spa, test) {
         accessToken: API_KEY
     })
 
+    var darktmap = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {
+            attribution: 'Stamen'
+        }) //.addTo(map);
+
+    //Experment
+    var interaction = cartodb.createLayer(map, 'http://documentation.cartodb.com/api/v2/viz/2b13c956-e7c1-11e2-806b-5404a6a683d5/viz.json')
+        .addTo(map)
+        .on('done', function(layer) {
+
+            layer.setInteraction(true);
+
+            layer.on('featureOver', function(e, latlng, pos, data) {
+                cartodb.log.log(e, latlng, pos, data);
+            });
+
+            layer.on('error', function(err) {
+                cartodb.log.log('error: ' + err);
+            });
+        }).on('error', function() {
+            cartodb.log.log("some error occurred");
+        });
+
     // Create a baseMaps object to hold the lightmap layer
     var baseMaps = {
-        "Ligh map": lightmap
+        "Ligh map": lightmap,
+        "Dark map": darktmap
     };
 
     // Create an overlays object to add to the layer control
@@ -241,7 +264,6 @@ function createMap(income, health_districts, spa, test) {
         "Service Planning Area": spa,
         "Hospitals": test
     };
-
 
     // Create the map with our layers
     var myMap = L.map("map", {
