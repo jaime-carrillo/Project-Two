@@ -1,35 +1,51 @@
-function init() {
-    data = [{
-        x: [CityCounty, District, Corporation, Investor, LLC, Non-Profit, UnivCalifornia],
-        y: [3,1,14, 7,7,44,2] }];
+// Store API query variables
+var baseURL = "http://127.0.0.1:5000";
+var option = "/api/v1.0/ed";
 
-    Plotly.newPlot("plot", data);
+// Assemble API query URL
+var url = baseURL + option
 
-}
+console.log(url)
+d3.json(option, function(data) {
+    console.log(data)
+})
 
-d3.selectAll("#selDataset").on("change", updatePlotly);
 
-function updatePlotly() {
-    var dropdownMenu = d3.select("#selDataset");
 
-    var dataset = dropdownMenu.property("value");
+// // Use filter() to pass the function as its argument
+// var hospitals = data.filter(id);
 
-    var x = [];
-    var y = [];
+// //  Check to make sure your are filtering your movies.
+// console.log(id);
 
-    if (dataset === 'dataset1') {
-        x = [CityCounty, District, Corporation, Investor, LLC, Non-Profit, UnivCalifornia];
-        y = [3,1,14, 7,7,44,2];
-    }
+// // Use the map method with the arrow function to return all the filtered movie titles.
+// var visits = data.map(visit =>  movies.title);
 
-    if (dataset2 === 'dataset2') {
-        x = [CityCounty, District, Corporation, Investor, LLC, Non-Profit, UnivCalifornia];
-        y = [258031, 114007, 372357, 141153, 133390, 2140346, 78766];
-    }
+// // Use the map method with the arrow function to return all the filtered movie metascores.
+// var ratings = filteredMovies.map(movies => movies.metascore);
 
-    Plotly.restyle("plot", "x", [x]);
-    Plotly.restyle("plot", "y", [y]);
+// // Check your filtered metascores.
+// console.log(ratings);
 
-}
+// // Create your trace.
+// var trace = {
+//   x: titles,
+//   y: ratings,
+//   type: "bar"
+// };
 
-init();
+// // Create the data array for our plot
+// var data = [trace];
+
+// // Define the plot layout
+// var layout = {
+//   title: "The highest critically acclaimed movies.",
+//   xaxis: { title: "Title" },
+//   yaxis: { title: "Metascore (Critic) Rating"}
+// };
+
+// // Plot the chart to a div tag with id "bar-plot"
+// Plotly.newPlot("bar-plot", data, layout);
+
+
+
