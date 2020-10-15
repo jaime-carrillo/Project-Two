@@ -1,0 +1,22 @@
+{
+    "folders": [
+		{
+			"path": "LicDataSet\\Flask"
+		},
+		{
+			"path": "LicDataSet\\Dashboard"
+		},
+		{
+			"path": "LicDataSet\\hospital map"
+		},
+		{
+			"path": "LicDataSet\\facilities"
+		},
+		{
+			"path": "LicDataSet\\LA_County_Areas"
+		}
+	],
+    "settings": {
+        "liveServer.settings.multiRootWorkspaceName": "LA_County_Areas"
+    }
+}
