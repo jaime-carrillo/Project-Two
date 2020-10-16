@@ -134,9 +134,12 @@ function getValues(id) {
         var layout = {
             title: "District Ratings",
             yaxis: {
-                tickmode: "linear",
+                tickmode: "linear"
             },
-            height: 500,
+            margin: {
+                b: 200
+            },
+            height: 800,
             width: 1000
         };
 
