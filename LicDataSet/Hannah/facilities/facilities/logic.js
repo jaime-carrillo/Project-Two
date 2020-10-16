@@ -16,8 +16,6 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 // Store API query variables
 var baseURL = "http://127.0.0.1:5000/api/v1.0/facilities";
-// var complaint = "&complaint_type=Rodent";
-// var limit = "&$limit=10000";
 
 // Assemble API query URL
 var url = baseURL
@@ -39,9 +37,17 @@ d3.json(url, function(response) {
     // Check for location property
     if (lat) {
 
+      //Icon for hospital markers
+      var chcIcon = new L.Icon({
+        iconSize: [27, 27],
+        iconAnchor: [13, 27],
+        popupAnchor:  [1, -24],
+        iconUrl: 'clinic.png'
+    });
+
       // Add a new marker to the cluster group and bind a pop-up
-      markers.addLayer(L.marker([lat,lon])
-        .bindPopup(response[i].descriptor));
+      markers.addLayer(L.marker([lat,lon],{icon:chcIcon})
+        .bindPopup(response[i].Name));
     }
 
   }
@@ -50,3 +56,6 @@ d3.json(url, function(response) {
   myMap.addLayer(markers);
 
 });
+
+
+
