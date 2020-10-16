@@ -97,20 +97,21 @@ d3.json(geoData, function(income_data) {
     });
 
     // Store API query variables
-    var baseURL = "http://127.0.0.1:5000";
-    var option = "/api/v1.0/hospitals";
+    var facURL = "http://127.0.0.1:5000/api/v1.0/facilities";
+    var hosURL = "http://127.0.0.1:5000/api/v1.0/hospitals";
+    var foodURL = "http://127.0.0.1:5000/api/v1.0/food";
 
-    // Assemble API query URL
-    var url = baseURL + option
-    console.log(url)
+    // // Assemble API query URL
+    // var url = baseURL + option
+    // console.log(url)
 
     // Grab the data with d3
-    d3.json(url, function(response) {
+    d3.json(facURL, function(response) {
 
         // var parentGroup = L.markerClusterGroup()
 
         // Create feature group
-        test = L.featureGroup(getArrayOfMarkers())
+        facilities = L.featureGroup(getArrayOfMarkers())
 
         // test = L.featureGroup.subGroup(
         //     parentGroup,
@@ -121,47 +122,191 @@ d3.json(geoData, function(income_data) {
 
         function getArrayOfMarkers() {
             var result = [];
-            var popup = [];
+            // var popup = [];
 
-            for (var i = 0; i < response.length; i += 1) {
+            // Loop through data
+            for (var i = 0; i < response.length; i++) {
 
-                if (location) {
-                    var lat = response[i].LATITUDE;
-                    var lon = response[i].LONGITUDE;
-                    var name = response[i].FACILITY_NAME
+                // Set the data location property to a variable
+                var lat = response[i].LATITUDE;
+                var lon = response[i].LONGITUDE;
+                // console.log(lat)
 
-                    result.push(L.marker([lat, lon]));
-                    popup.push(name);
-                    //result.push([lat, lon])
+                // Check for location property
+                if (lat) {
 
-                }
+                //Icon for hospital markers
+                var chcIcon = new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl: 'static/png/clinic.png'
+                });
+
+                    result.push(L.marker([lat,lon], {icon:chcIcon}))
+                    // popup.push(L.marker.bindPopup(response[i].Name));
+                    // result.push([lat, lon])
+                
             }
-            return result;
+            
         }
-
+        // facilities.bindPopup(response[i].Name)
         //Create function to get faclity name for popups
 
-        function getPopups() {
-            var popup = [];
+    //     function getPopups() {
+    //         var popup = [];
 
-            for (var i = 0; i < response.length; i += 1) {
+    //         for (var i = 0; i < response.length; i += 1) {
 
-                if (location) {
-                    var name = response[i].FACILITY_NAME
-                    popup.push(name);
+    //             if (location) {
+    //                 var name = response[i].FACILITY_NAME
+    //                 popup.push(name);
 
+    //             }
+    //         }
+    //         // console.log(popup)
+    //         return popup;
+    //     }
+
+    //     test.bindPopup(getPopups()).openPopup();
+
+    return result;
+    }});
+
+        // Grab the data with d3
+        d3.json(hosURL, function(response) {
+
+            // var parentGroup = L.markerClusterGroup()
+    
+            // Create feature group
+            hospitals = L.featureGroup(getArrayOfMarkers())
+    
+            // test = L.featureGroup.subGroup(
+            //     parentGroup,
+            //     getArrayOfMarkers()
+            // )
+    
+            //Create function to get an array of the lat and lon
+    
+            function getArrayOfMarkers() {
+                var result = [];
+                // var popup = [];
+    
+                // Loop through data
+                for (var i = 0; i < response.length; i++) {
+    
+                    // Set the data location property to a variable
+                    var lat = response[i].LATITUDE;
+                    var lon = response[i].LONGITUDE;
+                    // console.log(lat)
+    
+                    // Check for location property
+                    if (lat) {
+    
+                    //Icon for hospital markers
+                    var hosIcon = new L.Icon({
+                        iconSize: [27, 27],
+                        iconAnchor: [13, 27],
+                        popupAnchor:  [1, -24],
+                        iconUrl: 'static/png/hospital.png'
+                    });
+    
+                        result.push(L.marker([lat,lon], {icon:hosIcon}))
+                        // popup.push(L.marker.bindPopup(response[i].Name));
+                        // result.push([lat, lon])
+                    
                 }
+                
             }
-            // console.log(popup)
-            return popup;
+            // facilities.bindPopup(response[i].Name)
+            //Create function to get faclity name for popups
+    
+        //     function getPopups() {
+        //         var popup = [];
+    
+        //         for (var i = 0; i < response.length; i += 1) {
+    
+        //             if (location) {
+        //                 var name = response[i].FACILITY_NAME
+        //                 popup.push(name);
+    
+        //             }
+        //         }
+        //         // console.log(popup)
+        //         return popup;
+        //     }
+    
+        //     test.bindPopup(getPopups()).openPopup();
+    
+        return result;
+        }});
+
+        // Grab the data with d3
+        d3.json(foodURL, function(response) {
+
+            // var parentGroup = L.markerClusterGroup()
+    
+            // Create feature group
+            food = L.featureGroup(getArrayOfMarkers())
+    
+            // test = L.featureGroup.subGroup(
+            //     parentGroup,
+            //     getArrayOfMarkers()
+            // )
+    
+            //Create function to get an array of the lat and lon
+        function getArrayOfMarkers() {
+            var result = [];
+            // var popup = [];
+
+            // Loop through data
+            for (var i = 0; i < response.length; i++) {
+
+                // Set the data location property to a variable
+                var lat = response[i].Latitude;
+                var lon = response[i].Longitude;
+                // console.log(lat)
+
+                // Check for location property
+                if (lat) {
+
+                //Icon for hospital markers
+                var foodIcon = new L.Icon({
+                    iconSize: [27, 27],
+                    iconAnchor: [13, 27],
+                    popupAnchor:  [1, -24],
+                    iconUrl: 'static/png/carrot.png'
+                });
+
+                    result.push(L.marker([lat,lon], {icon:foodIcon}))
+                    // popup.push(L.marker.bindPopup(response[i].Name));
+                    // result.push([lat, lon])
+                
+            }
+            
         }
+        // facilities.bindPopup(response[i].Name)
+        //Create function to get faclity name for popups
 
-        test.bindPopup(getPopups()).openPopup();
+    //     function getPopups() {
+    //         var popup = [];
 
+    //         for (var i = 0; i < response.length; i += 1) {
 
-    });
+    //             if (location) {
+    //                 var name = response[i].FACILITY_NAME
+    //                 popup.push(name);
 
+    //             }
+    //         }
+    //         // console.log(popup)
+    //         return popup;
+    //     }
 
+    //     test.bindPopup(getPopups()).openPopup();
+
+    return result;
+    }});
     //Set up health distric boundries
     var link = "static/data/hd.geojson"
 
@@ -200,7 +345,7 @@ d3.json(geoData, function(income_data) {
             }) //.addTo(myMap)
 
         // Sending income, districts, and spa layer to the createMap function
-        createMap(income, health_districts, spa, test);
+        createMap(income, health_districts, spa, facilities, hospitals, food);
     });
 
 });
@@ -217,7 +362,7 @@ d3.json(geoData, function(income_data) {
 
 
 
-function createMap(income, health_districts, spa, test) {
+function createMap(income, health_districts, spa, facilities, hospitals, food) {
 
     // Create tile layer
     var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -262,7 +407,10 @@ function createMap(income, health_districts, spa, test) {
         "Income": income,
         "Health Districts": health_districts,
         "Service Planning Area": spa,
-        "Hospitals": test
+        "Community Health Clinics": facilities,
+        "Hospitals": hospitals,
+        "Food Pantries": food
+    
     };
 
     // Create the map with our layers
@@ -274,7 +422,9 @@ function createMap(income, health_districts, spa, test) {
             income,
             health_districts,
             spa,
-            test
+            facilities,
+            hospitals,
+            food
         ]
     });
 

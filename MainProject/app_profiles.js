@@ -297,8 +297,8 @@ function getData(id) {
             }],
             title: info[0].GEONAME,
             subtitle: 'Plot Subtitle',
-            height: 370,
-            width: 370,
+            height: 500,
+            width: 500,
             xaxis: {
                 zeroline: false,
                 showticklabels: false,
@@ -384,8 +384,8 @@ function getData(id) {
             }],
             title: 'Los Angles County',
             subtitle: 'Plot Subtitle',
-            height: 400,
-            width: 400,
+            height: 500,
+            width: 500,
             xaxis: {
                 zeroline: false,
                 showticklabels: false,
