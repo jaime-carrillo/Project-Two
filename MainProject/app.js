@@ -80,32 +80,15 @@ function getValues(id) {
         //#############################################################
 
         // Create trace for ED visits (1)
-        var trace1 = {
-            x: labels,
-            y: visits,
-            name: 'Emergency Room Visits',
-            type: 'bar',
-            text: visits.map(String),
-            textposition: 'auto',
-            hoverinfo: 'none',
-            marker: {
-                color: 'rgb(158,202,225)',
-                opacity: 0.7,
-                line: {
-                    color: 'rgb(8,48,107)',
-                    width: 1.5
-                }
-            }
-        };
 
         // Create trace for hospital size (2)
-        var trace2 = {
-            x: labels,
-            y: hospType,
+        var trace1 = {
+            x: hospType,
+            y: labels,
             name: 'Hospital Type',
             type: 'bar',
             text: hospType.map(String),
-            textposition: 'auto',
+            // textposition: 'auto',
             hoverinfo: 'none',
             marker: {
                 color: 'orange',
@@ -117,16 +100,16 @@ function getValues(id) {
             }
         };
 
-        var trace3 = {
-            x: labels,
-            y: hospSize,
+        var trace2 = {
+            x: hospSize,
+            y: labels,
             name: 'Hospital Size',
             type: 'bar',
             text: hospSize.map(String),
-            textposition: 'auto',
+            // textposition: 'auto',
             hoverinfo: 'none',
             marker: {
-                color: 'orange',
+                color: 'rgb(15,185,161)',
                 opacity: 0.5,
                 line: {
                     color: 'rgb(8,48,107)',
@@ -135,82 +118,89 @@ function getValues(id) {
             }
         };
         
+        var trace3 = {
+            x: labels,
+            y: visits,
+            name: 'Visits',
+            type: 'bar',
+            text: visits.map(String),
+            textposition: 'auto',
+            hoverinfo: 'True',
+            marker: {
+                color: 'rgb(8,68,202)',
+                opacity: 0.5,
+                line: {
+                    color: 'rgb(8,48,107)',
+                    width: 1.5
+                }
+            }
+        };
+
+        var trace4 = {
+            x: labels,
+            y: medical,
+            name: 'Medi-Cal',
+            type: 'bar',
+            text: medical.map(String),
+            textposition: 'auto',
+            hoverinfo: 'True',
+            marker: {
+                color: 'rgb(239,22,17)',
+                opacity: 0.5,
+                line: {
+                    color: 'rgb(8,48,107)',
+                    width: 1.5
+                }
+            }
+        };
+
+        var trace5 = {
+            x: labels,
+            y: Hispanics,
+            name: 'Hispanics',
+            type: 'bar',
+            text: Hispanics.map(String),
+            textposition: 'auto',
+            hoverinfo: 'True',
+            marker: {
+                color: 'rgb(43,232,241)',
+                opacity: 1.5,
+                line: {
+                    color: 'rgb(8,48,107)',
+                    width: 1.5
+                }
+            }
+        };
         // Create the data array for our plot
-        var data = [trace1, trace2, trace3];
+        var data1 = [trace1];
+        var data2 = [trace2];
+        var data3 = [trace3, trace4, trace5];
 
         // Define the plot layout
         var layout = {
-            title: "title",
+            title: "All Hospitals",
             yaxis: {
-                tickmode: "linear",
+                tickmode: "none",
+            },
+            height: 375,
+            width: 450
+        };
+
+        var layout2 = {
+            title: "All Hospitals",
+            yaxis: {
+                // nticks: 0,
             },
             height: 500,
-            width: 1000
+            width: 1100
         };
 
         // Plot the chart to a div tag with id "bar"
-        Plotly.newPlot("bar", data, layout);
+        Plotly.newPlot("bar1", data1, layout);
+        Plotly.newPlot("bar2", data2, layout);
+        Plotly.newPlot("bar3", data3, layout2);
 
-        // // Create data array for bubble chart
-        // var trace4 = {
-        //     x: values,
-        //     y: medical,
-        //     text: medical.map(String),
-        //     mode: 'markers',
-        //     marker: {
-        //         color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
-        //         size: population
-        //     }
-        // };
-
-        // var data1 = [trace4];
-        // //Creat layout of bubble chart
-        // var layout1 = {
-        //     xaxis: { title: "Title" },
-        //     height: 800,
-        //     width: 1200
-        // };
-
-        // //Plot bubble chart
-        // Plotly.newPlot("bubble", data1, layout1);
-
-        // var trace5 = {
-        //     x: labels,
-        //     y: dx,
-        //     name: 'Symptoms',
-        //     type: 'bar',
-        //     text: dx.map(String),
-        //     textposition: 'auto',
-        //     hoverinfo: 'none',
-        //     marker: {
-        //         color: 'orange',
-        //         opacity: 0.5,
-        //         line: {
-        //             color: 'rgb(8,48,107)',
-        //             width: 1.5
-        //         }
-        //     }
-        // }
         
-        // function buildTable(Medi_Cal, Medicare, Private, Self_Pay) {
-        //     var table = d3.select("#payer-table");
-        //     var tbody = table.select("tbody");
-        //     var trow;
-        //     // for (var i = 0; i < 12; i++) {
-        //       trow = tbody.append("tr");
-        //       trow.append("td").text(Medi_Cal);
-        //       trow.append("td").text(Medicare);
-        //       trow.append("td").text(Private);
-        //       trow.append("td").text(Self_Pay);
-        //     }
-        
-        //   function buildPlot(){
-
-        //     var Medi_Cal = [45]
-        //     var Medicare = [16]
-        //     var Private = [29]
-        //     var Self_Pay = [8]
-        //   }
 
     })
 }
@@ -233,20 +223,12 @@ function getData(id) {
             profile_dict["facility_name"] = obj.facility_name
             profile_dict["ED_Visit"] = obj.ED_Visit
             profile_dict["HispanicorLatino"] = obj.HispanicorLatino
-            // profile_dict["Prop_65y"] = obj.Prop_65y
-                //profile_dict["Prop_65y_rank"] = obj.Prop_65y_rank
-                // profile_dict["Poverty"] = poverty
-                // profile_dict["Poverty_rank"] = povertyR
-            // profile_dict["Median_incoms"] = obj.Median_incoms
-                // profile_dict["MI_rank"] = mirank
-                // profile_dict["Farmers_market"] = market
-                // profile_dict["Farmers_market_rank"] = marketrank
-            // profile_dict["Food_insecurity"] = obj.Food_insecurity
-                // profile_dict["Food_insecurity_rank"] = foorank
-                // profile_dict["School_Meals"] = meal
-                // profile_dict["School_Meals_rank"] = mealrank
-            // profile_dict["Health_index"] = obj.Health_index
-                // profile_dict["Health_index_rank"] = idxrank
+            profile_dict["control_type_desc"] = obj.control_type_desc
+            profile_dict["Medi_Cal"] = obj.Medi_Cal
+            profile_dict["DBA_ZIP_CODE"] = obj.DBA_ZIP_CODE
+            profile_dict["licensed_bed_size"] = obj.licensed_bed_size
+            profile_dict["SelfPay"] = obj.SelfPay
+                
 
             //Push to array
             demoData.push(profile_dict)
@@ -269,11 +251,15 @@ function getData(id) {
         demoInfo.html("");
 
         // get demographic data for the name and append to panel
-        demoInfo.append("h4").text(info[0].facility_name)
-            .append("h4").text("Total ED Visits: " + info[0].ED_Visit)
-            .append("h5").text("Type of Hospital: " + info[0].control_type_desc)
-            .append("h5").text("Hispanics: " + info[0].HispanicorLatino)
-            .append("h6").text("DX Symptoms: " + info[0].DX_Symptoms)
+        demoInfo.append("h5").text(info[0].facility_name)
+            // .append("h4").text("Name: " + info[0].facility_name)
+            .append("h5").text("Total ED Visits: " + info[0].ED_Visit + "\n")
+            .append("h6").text("Type of Hospital: " + info[0].control_type_desc + "\n")
+            .append("h6").text("Licensed Beds: " + info[0].licensed_bed_size + "\n")
+            .append("h6").text("Hispanics: " + info[0].HispanicorLatino + "\n")
+            .append("h6").text("Medi-Cal: " + info[0].Medi_Cal)
+            .append("h6").text("Self_Pay: " + info[0].SelfPay)
+            .append("h6").text("Zip Code: " + info[0].DBA_ZIP_CODE)
             // .append("h6").text("Food Insecurity: " + info[0].Food_insecurity)
             // .append("h6").text("Health Index: " + info[0].Health_index)
 
@@ -364,91 +350,91 @@ function getData(id) {
         // };
 
         //Plot dynamic gauge chart
-        Plotly.newPlot('gauge1', data2, layout2);
+        // Plotly.newPlot('gauge1', data2, layout2);
 
         //#############################################################
-        // Gauge for Los Angles County Average
+        // Cards for Hospital Types and Size
         //#############################################################
-        var benchmark = 44.73372093
-        var level = benchmark * 1.71
+        // var benchmark = 44.73372093
+        // var level = benchmark * 1.71
 
-        // Trig to calc meter point
-        var degrees = 180 - level,
-            radius = .5;
-        var radians = degrees * Math.PI / 180;
-        var x = radius * Math.cos(radians);
-        var y = radius * Math.sin(radians);
-        var path1 = (degrees < 45 || degrees > 135) ? 'M -0.0 -0.025 L 0.0 0.025 L ' : 'M -0.025 -0.0 L 0.025 0.0 L ';
-        // Path: may have to change to create a better triangle
-        var mainPath = path1,
-            pathX = String(x),
-            space = ' ',
-            pathY = String(y),
-            pathEnd = ' Z';
-        var path = mainPath.concat(pathX, space, pathY, pathEnd);
+        // // Trig to calc meter point
+        // var degrees = 180 - level,
+        //     radius = .5;
+        // var radians = degrees * Math.PI / 180;
+        // var x = radius * Math.cos(radians);
+        // var y = radius * Math.sin(radians);
+        // var path1 = (degrees < 45 || degrees > 135) ? 'M -0.0 -0.025 L 0.0 0.025 L ' : 'M -0.025 -0.0 L 0.025 0.0 L ';
+        // // Path: may have to change to create a better triangle
+        // var mainPath = path1,
+        //     pathX = String(x),
+        //     space = ' ',
+        //     pathY = String(y),
+        //     pathEnd = ' Z';
+        // var path = mainPath.concat(pathX, space, pathY, pathEnd);
 
-        //Create data for static guage
-        var data2 = [{
-                type: 'scatter',
-                x: [0],
-                y: [0],
-                marker: { size: 14, color: '850000' },
-                showlegend: false,
-                name: 'Index',
-                text: benchmark,
-                hoverinfo: 'text+name'
-            },
-            {
-                values: [1, 1, 1, 1, 1, 1, 6],
-                rotation: 90,
-                text: ['100', '80', '60', '40', '20', '0', ''],
-                textinfo: 'text',
-                textposition: 'inside',
-                marker: {
-                    colors: ['#8ebe6b', '#9fc97f', '#b2d494', '#c5dea8', '#dae7bd', '#f1f1d2',
-                        'rgba(0, 0, 0, 0)'
-                    ]
-                },
-                hoverinfo: 'label',
-                hole: .5,
-                type: 'pie',
-                showlegend: false
-            }
-        ];
+        // //Create data for static guage
+        // var data2 = [{
+        //         type: 'scatter',
+        //         x: [0],
+        //         y: [0],
+        //         marker: { size: 14, color: '850000' },
+        //         showlegend: false,
+        //         name: 'Index',
+        //         text: benchmark,
+        //         hoverinfo: 'text+name'
+        //     },
+        //     {
+        //         values: [1, 1, 1, 1, 1, 1, 6],
+        //         rotation: 90,
+        //         text: ['100', '80', '60', '40', '20', '0', ''],
+        //         textinfo: 'text',
+        //         textposition: 'inside',
+        //         marker: {
+        //             colors: ['#8ebe6b', '#9fc97f', '#b2d494', '#c5dea8', '#dae7bd', '#f1f1d2',
+        //                 'rgba(0, 0, 0, 0)'
+        //             ]
+        //         },
+        //         hoverinfo: 'label',
+        //         hole: .5,
+        //         type: 'pie',
+        //         showlegend: false
+        //     }
+        // ];
 
         //Create layout for static guage
-        var layout2 = {
-            shapes: [{
-                type: 'path',
-                path: path,
-                fillcolor: 'rgba(0, 0, 0, 0)',
-                line: {
-                    color: '850000'
-                }
-            }],
-            title: 'Los Angles County',
-            subtitle: 'Plot Subtitle',
-            height: 400,
-            width: 400,
-            xaxis: {
-                zeroline: false,
-                showticklabels: false,
-                showgrid: false,
-                range: [-1, 1],
-                titlefont: {
-                    title: 'x Axis',
-                    family: 'Courier New, monospace',
-                    size: 18,
-                    color: '#7f7f7f'
-                }
-            },
-            yaxis: {
-                zeroline: false,
-                showticklabels: false,
-                showgrid: false,
-                range: [-1, 1]
-            }
-        };
+    //     var layout2 = {
+    //         shapes: [{
+    //             type: 'path',
+    //             path: path,
+    //             fillcolor: 'rgba(0, 0, 0, 0)',
+    //             line: {
+    //                 color: '850000'
+    //             }
+    //         }],
+    //         title: 'Los Angles County',
+    //         subtitle: 'Plot Subtitle',
+    //         height: 400,
+    //         width: 400,
+    //         xaxis: {
+    //             zeroline: false,
+    //             showticklabels: false,
+    //             showgrid: false,
+    //             range: [-1, 1],
+    //             titlefont: {
+    //                 title: 'x Axis',
+    //                 family: 'Courier New, monospace',
+    //                 size: 18,
+    //                 color: '#7f7f7f'
+    //             }
+    //         },
+    //         yaxis: {
+    //             zeroline: false,
+    //             showticklabels: false,
+    //             showgrid: false,
+    //             range: [-1, 1]
+    //         }
+    //     };
 
         //Plot static gauge chart
         Plotly.newPlot('gauge2', data2, layout2);
