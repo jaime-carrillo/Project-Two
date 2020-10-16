@@ -22,6 +22,7 @@ L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 // Store API query variables
 var facURL = "http://127.0.0.1:5000/api/v1.0/facilities";
 var hosURL = "http://127.0.0.1:5000/api/v1.0/hospitals";
+var foodURL = "http://127.0.0.1:5000/api/v1.0/food";
 
 // Grab the data with d3
 d3.json(facURL, function(response) {
@@ -32,7 +33,7 @@ d3.json(facURL, function(response) {
     // Set the data location property to a variable
     var lat = response[i].LATITUDE;
     var lon = response[i].LONGITUDE;
-    console.log(lat)
+    // console.log(lat)
 
     // Check for location property
     if (lat) {
@@ -65,7 +66,7 @@ d3.json(hosURL, function(response) {
     // Set the data location property to a variable
     var lat = response[i].LATITUDE;
     var lon = response[i].LONGITUDE;
-    console.log(lat)
+    // console.log(lat)
 
     // Check for location property
     if (lat) {
@@ -91,21 +92,74 @@ d3.json(hosURL, function(response) {
 
 });
 
-var legend = L.control({position: 'bottomright'});
+// Grab the data with d3
+d3.json(foodURL, function(response) {
 
-legend.onAdd = function () {
+  // Loop through data
+  for (var i = 0; i < response.length; i++) {
 
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = ["Hospital", "Community Health Clinic"],
-        labels = ["hospital.png","clinic.png"];
+    // Set the data location property to a variable
+    var lat = response[i].Latitude;
+    var lon = response[i].Longitude;
+    console.log(lat)
 
-    // // loop through our density intervals and generate a label with a colored square for each interval
-    // for (var i = 0; i < grades.length; i++) {
-    //     div.innerHTML +=
-    //         grades[i] + (" <img src="+ labels[i] +" height='50' width='50'>") +'<br>';
-    // }
+    // Check for location property
+    if (lat) {
 
-    return div;
-};
+      //Icon for hospital markers
+      var foodIcon = new L.Icon({
+        iconSize: [27, 27],
+        iconAnchor: [13, 27],
+        popupAnchor:  [1, -24],
+        iconUrl: 'carrot.png'
+    });
 
-legend.addTo(map);
+      // Add a new marker to the cluster group and bind a pop-up
+      var marker = L.marker([lat,lon],{icon: foodIcon}).addTo(myMap);
+
+      // Binding a pop-up to our marker
+    marker.bindPopup(response[i].name);
+
+  }
+
+}
+
+
+});
+// var legend = L.control({position: 'bottomright'});
+
+// legend.onAdd = function () {
+
+//     var div = L.DomUtil.create('div', 'info legend'),
+//         grades = ["Hospital", "Community Health Clinic", "Food Pantry"],
+//         labels = ["hospital.png","clinic.png", "carrot.png"];
+
+//     // // loop through our density intervals and generate a label with a colored square for each interval
+//     // for (var i = 0; i < grades.length; i++) {
+//     //     div.innerHTML +=
+//     //         grades[i] + (" <img src="+ labels[i] +" height='50' width='50'>") +'<br>';
+//     // }
+
+//     return div;
+// };
+
+// legend.addTo(myMap);
+
+  // Set up the legend
+  var legend = L.control({ position: "bottomright" });
+  legend.onAdd = function() {
+    var div = L.DomUtil.create("div legend");
+    // var limits = geojson.options.limits;
+    // var colors = geojson.options.colors;
+    // var labels = [];
+
+    // Add min & max
+    var legendInfo = "<h1>Median Income</h1>" +
+      "<div >" +
+        "<div class=legend></div>" +
+        "<div >hi</div>" +
+      "</div>";
+
+    div.innerHTML = legendInfo};
+
+    legend.addTo(myMap);
