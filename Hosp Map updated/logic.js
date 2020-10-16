@@ -33,14 +33,19 @@ d3.json(URL, function(response) {
     // Check for location property
     if (location) {
 
-      //Icon for hospital markers
+      // // function for sizing icons
+      // function sizeByNumBeds(feature){
+      //   var NBiconSize =(feature.properties.response[i].STF_BEDS)
+      // }
+
+    //Icon for hospital markers
       var hospIcon=L.icon({
         iconUrl:"https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/512x512/hospital.png"
-        iconAnchor:
+        // iconSize: NBiconSize
       })
 
       // Add a new marker to the cluster group and bind a pop-up
-      markers.addLayer(L.marker([location.LATITUDE, location.LONGITUDE],{icon:hospIcon})
+      markers.addLayer(L.marker([location.LATITUDE, location.LONGITUDE],{icon:hospIcon}).setRadius(respone(i).STF_BEDS)
         .bindPopup(response[i].ID));
     }
 
