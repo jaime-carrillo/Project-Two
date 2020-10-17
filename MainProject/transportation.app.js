@@ -23,11 +23,16 @@ var myMap = L.map("map", {
   // Grab our GeoJSON data
   d3.json(URL, function(data) {
   
-    var metroIcon=L.icon({
-      IconUrl:"https://i.pinimg.com/236x/1a/1a/1f/1a1a1ff90c7ad474d4fc6ea8030cd3d0--logo-free-free-icon.jpg"
+    var metroIcon= new L.Icon({
+      iconUrl:'/static/png/bus.png',
+      iconSize: [27, 27],
+      iconAnchor: [13, 27],
+      popupAnchor:  [1, -24]
+      
     })
     // Create a GeoJSON layer with the retrieved data
-    L.geoJson((data), {icon: metroIcon}).addTo(myMap)
-  
-  });
+    // L.geoJson((data), {icon:metroIcon}).addTo(myMap)
+    L.geoJson((data), {pointToLayer: function(feature, latlag) {
+      return L.marker (latlag, {icon: metroIcon}).addTo(myMap)}
+  })});
   
