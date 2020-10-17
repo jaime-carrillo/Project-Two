@@ -87,7 +87,7 @@ function getValues(id) {
             y: labels,
             name: 'Hospital Type',
             type: 'bar',
-            text: hospType.map(String),
+            // text: hospType.map(String),
             // textposition: 'auto',
             hoverinfo: 'none',
             marker: {
@@ -99,13 +99,16 @@ function getValues(id) {
                 }
             }
         };
+        console.log(labels);
 
         var trace2 = {
             x: hospSize,
             y: labels,
             name: 'Hospital Size',
             type: 'bar',
-            text: hospSize.map(String),
+            text: hospSize.map(
+                hospSize => `${hospSize}`
+            ),
             // textposition: 'auto',
             hoverinfo: 'none',
             marker: {
@@ -117,15 +120,17 @@ function getValues(id) {
                 }
             }
         };
+        console.log(hospSize);
         
         var trace3 = {
             x: labels,
             y: visits,
             name: 'Visits',
             type: 'bar',
-            text: visits.map(String),
+            // text: visits.map(String),
             textposition: 'auto',
             hoverinfo: 'True',
+            // hovertemplate: "%{y}",
             marker: {
                 color: 'rgb(8,68,202)',
                 opacity: 0.5,
@@ -141,7 +146,7 @@ function getValues(id) {
             y: medical,
             name: 'Medi-Cal',
             type: 'bar',
-            text: medical.map(String),
+            // text: medical.map(String),
             textposition: 'auto',
             hoverinfo: 'True',
             marker: {
@@ -159,7 +164,7 @@ function getValues(id) {
             y: Hispanics,
             name: 'Hispanics',
             type: 'bar',
-            text: Hispanics.map(String),
+            // text: Hispanics.map(String),
             textposition: 'auto',
             hoverinfo: 'True',
             marker: {
@@ -179,11 +184,17 @@ function getValues(id) {
         // Define the plot layout
         var layout = {
             title: "All Hospitals",
+            xaxis: {
+                tickmode: "none",
+                showticklabels: "false",
+                zeroline: "false"
+            },
             yaxis: {
                 tickmode: "none",
+                showticklabels: "false",
             },
-            height: 375,
-            width: 450
+            height: 275,
+            width: 375
         };
 
         var layout2 = {
